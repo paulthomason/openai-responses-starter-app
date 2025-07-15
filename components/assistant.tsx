@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Chat from "./chat";
 import useConversationStore from "@/stores/useConversationStore";
 import { Item, processMessages } from "@/lib/assistant";
@@ -31,6 +31,13 @@ export default function Assistant() {
     }
   };
 
+  useEffect(() => {
+    if (chatMessages.length === 1) {
+      handleSendMessage("Start game");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleApprovalResponse = async (
     approve: boolean,
     id: string
@@ -52,8 +59,8 @@ export default function Assistant() {
     <div className="h-full p-4 w-full bg-white">
       <Chat
         items={chatMessages}
-        onSendMessage={handleSendMessage}
         onApprovalResponse={handleApprovalResponse}
+        onSelectOption={handleSendMessage}
       />
     </div>
   );

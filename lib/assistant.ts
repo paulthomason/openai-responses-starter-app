@@ -66,11 +66,18 @@ export interface McpApprovalRequestItem {
   arguments?: string;
 }
 
+export interface GameOptionsItem {
+  type: "game_options";
+  id?: string;
+  options: string[];
+}
+
 export type Item =
   | MessageItem
   | ToolCallItem
   | McpListToolsItem
-  | McpApprovalRequestItem;
+  | McpApprovalRequestItem
+  | GameOptionsItem;
 
 export const handleTurn = async (
   messages: any[],
@@ -536,6 +543,30 @@ export const processMessages = async () => {
             arguments: mcpApprovalRequestMessage.arguments,
           });
           setChatMessages([...chatMessages]);
+        }
+
+        // Parse game JSON and display options
+        try {
+          const lastItem = chatMessages[chatMessages.length - 1];
+          if (
+            lastItem &&
+            lastItem.type === "message" &&
+            lastItem.role === "assistant"
+          ) {
+            const parsed = JSON.parse(lastItem.content[0].text || "");
+            if (parsed.reply) {
+              lastItem.content[0].text = parsed.reply;
+            }
+            if (Array.isArray(parsed.options)) {
+              chatMessages.push({
+                type: "game_options",
+                options: parsed.options,
+              });
+            }
+            setChatMessages([...chatMessages]);
+          }
+        } catch (err) {
+          console.error("Failed to parse game JSON", err);
         }
 
         break;
