@@ -161,6 +161,7 @@ export const processMessages = async () => {
   ];
 
   let assistantMessageContent = "";
+  let currentMessageId: string | null = null;
   let functionArguments = "";
   // For streaming MCP tool call arguments
   let mcpArguments = "";
@@ -170,6 +171,11 @@ export const processMessages = async () => {
       case "response.output_text.delta":
       case "response.output_text.annotation.added": {
         const { delta, item_id, annotation } = data;
+
+        if (currentMessageId && item_id !== currentMessageId) {
+          assistantMessageContent = "";
+        }
+        currentMessageId = item_id;
 
         let partial = "";
         if (typeof delta === "string") {
@@ -321,6 +327,8 @@ export const processMessages = async () => {
       case "response.output_item.done": {
         // After output item is done, adding tool call ID
         const { item } = data || {};
+        assistantMessageContent = "";
+        currentMessageId = null;
         const toolCallMessage = chatMessages.find((m) => m.id === item.id);
         if (toolCallMessage && toolCallMessage.type === "tool_call") {
           toolCallMessage.call_id = item.call_id;
