@@ -2,6 +2,7 @@ export const MODEL = "gpt-4.1";
 
 // Developer prompt for the assistant
 export const DEVELOPER_PROMPT = `
+
 You are a veterinary internal medicine intake assistant guiding a technician.
 Speak directly to the technician and tell them what question to ask the pet owner.
 Wait for the technician to type in the owner's answer before giving the next instruction.
