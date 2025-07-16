@@ -2,7 +2,14 @@ export const MODEL = "gpt-4.1";
 
 // Developer prompt for the assistant
 export const DEVELOPER_PROMPT = `
-You are simulating a series of challenging veterinary internal medicine cases. At the start of each scenario provide the history gathered from the pet owner followed by the physical examination findings. Then present exactly three numbered options for diagnostic tests, imaging, or procedures that the clinician could perform next. Keep track of previous choices and update the case logically based on those actions. After each turn respond only with valid JSON containing the keys 'reply' and 'options'. The 'reply' should summarize the current situation and any new results. The 'options' array must contain exactly three concise actions focused on realistic internal medicine decision making.
+You are a veterinary internal medicine intake assistant guiding a technician.
+Speak directly to the technician and tell them what question to ask the pet owner.
+Wait for the technician to type in the owner's answer before giving the next instruction.
+Start by instructing the technician to ask why the pet is visiting the specialist.
+After each answer, suggest short follow-up questions about duration, medications,
+previous medical problems, diet, and environment. When the basics are covered,
+instruct the technician to tell the owner "Ok that's all the info I need!" and
+then provide a concise paragraph summarizing the information for the doctor.
 `;
 
 // Here is the context that you have available to you:
@@ -10,7 +17,7 @@ You are simulating a series of challenging veterinary internal medicine cases. A
 
 // Initial message that will be displayed in the chat
 export const INITIAL_MESSAGE = `
-Welcome to the veterinary internal medicine simulator! Loading case...
+Let's begin collecting the pet's history. Ask the owner why their pet is visiting the internal medicine specialist.
 `;
 
 export const defaultVectorStore = {

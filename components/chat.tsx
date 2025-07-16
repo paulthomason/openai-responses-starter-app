@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ToolCall from "./tool-call";
 import Message from "./message";
 import Annotations from "./annotations";
 import McpToolsList from "./mcp-tools-list";
 import McpApproval from "./mcp-approval";
 import GameOptions from "./game-options";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
 import {
   Item,
   McpApprovalRequestItem,
@@ -27,6 +29,7 @@ const Chat: React.FC<ChatProps> = ({
   onSelectOption,
 }) => {
   const itemsEndRef = useRef<HTMLDivElement>(null);
+  const [textInput, setTextInput] = useState("");
   const { isAssistantLoading } = useConversationStore();
 
   const scrollToBottom = () => {
@@ -38,10 +41,16 @@ const Chat: React.FC<ChatProps> = ({
     scrollToBottom();
   }, [items]);
 
+  const sendMessage = () => {
+    if (!textInput.trim()) return;
+    onSelectOption(textInput);
+    setTextInput("");
+  };
+
   return (
     <div className="flex justify-center items-center size-full">
       <div className="flex grow flex-col h-full max-w-[750px] gap-2">
-        <div className="h-[90vh] overflow-y-scroll px-10 flex flex-col">
+        <div className="flex-1 overflow-y-scroll px-10 flex flex-col">
           <div className="mt-auto space-y-5 pt-4">
             {items.map((item, index) => (
               <React.Fragment key={index}>
@@ -76,6 +85,22 @@ const Chat: React.FC<ChatProps> = ({
             {isAssistantLoading && <LoadingMessage />}
             <div ref={itemsEndRef} />
           </div>
+        </div>
+        <div className="p-4 border-t flex gap-2">
+          <Input
+            value={textInput}
+            onChange={(e) => setTextInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                sendMessage();
+              }
+            }}
+            placeholder="Type your message"
+            className="flex-1"
+          />
+          <Button onClick={sendMessage} size="sm">
+            Send
+          </Button>
         </div>
       </div>
     </div>
