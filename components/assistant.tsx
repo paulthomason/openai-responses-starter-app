@@ -38,7 +38,7 @@ export default function Assistant() {
   const startConversation = async () => {
     try {
       setAssistantLoading(true);
-      addConversationItem({ role: "user", content: "Start game" } as any);
+      addConversationItem({ role: "user", content: "Start" } as any);
       await processMessages();
     } catch (error) {
       console.error("Error starting conversation:", error);
