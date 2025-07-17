@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { Item } from "@/lib/assistant";
 import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
-import { INITIAL_MESSAGE } from "@/config/constants";
 
 interface ConversationState {
   // Items displayed in the chat
@@ -20,13 +19,7 @@ interface ConversationState {
 }
 
 const useConversationStore = create<ConversationState>((set) => ({
-  chatMessages: [
-    {
-      type: "message",
-      role: "assistant",
-      content: [{ type: "output_text", text: INITIAL_MESSAGE }],
-    },
-  ],
+  chatMessages: [],
   conversationItems: [],
   isAssistantLoading: false,
   setChatMessages: (items) => set({ chatMessages: items }),
