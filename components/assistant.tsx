@@ -5,8 +5,12 @@ import useConversationStore from "@/stores/useConversationStore";
 import { Item, processMessages } from "@/lib/assistant";
 
 export default function Assistant() {
-  const { chatMessages, addConversationItem, addChatMessage, setAssistantLoading } =
-    useConversationStore();
+  const {
+    chatMessages,
+    addConversationItem,
+    addChatMessage,
+    setAssistantLoading,
+  } = useConversationStore();
 
   const handleSendMessage = async (message: string) => {
     if (!message.trim()) return;
@@ -31,9 +35,19 @@ export default function Assistant() {
     }
   };
 
+  const startConversation = async () => {
+    try {
+      setAssistantLoading(true);
+      addConversationItem({ role: "user", content: "Start game" } as any);
+      await processMessages();
+    } catch (error) {
+      console.error("Error starting conversation:", error);
+    }
+  };
+
   useEffect(() => {
-    if (chatMessages.length === 1) {
-      handleSendMessage("Start game");
+    if (chatMessages.length === 0) {
+      startConversation();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
