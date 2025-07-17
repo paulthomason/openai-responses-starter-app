@@ -554,27 +554,31 @@ export const processMessages = async () => {
         }
 
         // Parse game JSON and display options
-        try {
-          const lastItem = chatMessages[chatMessages.length - 1];
-          if (
-            lastItem &&
-            lastItem.type === "message" &&
-            lastItem.role === "assistant"
-          ) {
-            const parsed = JSON.parse(lastItem.content[0].text || "");
-            if (parsed.reply) {
-              lastItem.content[0].text = parsed.reply;
+        const lastItem = chatMessages[chatMessages.length - 1];
+        if (
+          lastItem &&
+          lastItem.type === "message" &&
+          lastItem.role === "assistant"
+        ) {
+          const textContent = lastItem.content[0].text || "";
+          // Only attempt to parse if the message looks like JSON to avoid console errors
+          if (textContent.trim().startsWith("{") || textContent.trim().startsWith("[")) {
+            try {
+              const parsed = JSON.parse(textContent);
+              if (parsed.reply) {
+                lastItem.content[0].text = parsed.reply;
+              }
+              if (Array.isArray(parsed.options)) {
+                chatMessages.push({
+                  type: "game_options",
+                  options: parsed.options,
+                });
+              }
+              setChatMessages([...chatMessages]);
+            } catch (err) {
+              console.error("Failed to parse game JSON", err);
             }
-            if (Array.isArray(parsed.options)) {
-              chatMessages.push({
-                type: "game_options",
-                options: parsed.options,
-              });
-            }
-            setChatMessages([...chatMessages]);
           }
-        } catch (err) {
-          console.error("Failed to parse game JSON", err);
         }
 
         break;
